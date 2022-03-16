@@ -1,0 +1,249 @@
+
+spring:
+  jmx:
+    enabled: true
+  aop:
+    auto: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/compose_admin?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    hikari:
+      pool-name: HikariCP-Pool
+      minimum-idle: 3
+      idle-timeout: 600000
+      maximum-pool-size: 20
+      auto-commit: true
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+#  security:
+#    user:
+#      name: admin
+#      password: admin123
+
+  freemarker:
+    cache: true
+    charset: UTF-8
+    check-template-location: true
+    content-type: text/html
+    expose-request-attributes: true
+    expose-session-attributes: true
+    request-context-attribute: request
+    suffix: .ftl
+    tempalte-loader-path: classpath:/templates
+
+  boot:
+    admin:
+      client:
+        url: http://127.0.0.1:${server.port}
+        username: ${spring.security.user.name}
+        password: ${spring.security.user.password}
+        instance:
+          metadata:
+            user:
+              name: ${spring.security.user.name}
+              password: ${spring.security.user.password}
+          health-url: http://127.0.0.1:8581/actuator/health
+          service-url: http://127.0.0.1:8581/
+          management-url: http://127.0.0.1:8581/actuator
+  redis:
+    database: 1
+    host: 127.0.0.1
+#    cluster:
+#     nodes: 127.0.0.1:6391,127.0.0.1:6392,127.0.0.1:6393
+    jedis:
+      pool:
+        #最大连接数据库连接数,设 0 为没有限制
+        max-active: 8
+        #最大等待连接中的数量,设 0 为没有限制
+        max-idle: 8
+        #最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。
+        max-wait: -1ms
+        #最小等待连接中的数量,设 0 为没有限制
+        min-idle: 0
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1ms
+        min-idle: 0
+      shutdown-timeout: 100ms
+    password:
+    port: 6379
+    username:
+  flyway:
+    # 到新的环境中数据库中有数据，且没有flyway_schema_history表时，是否执行迁移操作。
+    #如果设置为false，在启动时会报错，并停止迁移;
+    #如果设置为true,则生成history表并完成所有的迁移，要根据实际情况设置;
+    baseline-on-migrate: false
+    #type: mysql
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    #schemas: compose_groovy_tool
+    # 执行时标记的tag 默认为<<Flyway Baseline>>
+    baseline-description: <<Flyway Baseline>>
+    # 是否启用flyway
+    enabled: true
+    # 检测迁移脚本的路径是否存在，如不存在，则抛出异常
+    check-location: true
+    # 脚本位置
+    locations: classpath:db/migration
+    # 在迁移时，是否校验脚本，假设V1.0__初始.sql已经迁移过了，在下次启动时会校验该脚本是否有变更过，则抛出异常
+    validate-on-migrate: true
+    sql-migration-suffixes: .sql
+    sql-migration-prefix: V
+    sql-migration-separator: __
+
+  rabbitmq:
+    host: 192.168.32.2
+    port: 5672
+    virtual-host: /hello
+    username: admin
+    password: admin
+
+logging:
+  config: classpath:log4j2.xml
+  file:
+   path: /logs
+  level:
+    web: info
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    cache-enabled: false
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-prefix: info
+
+distributedId:
+  address: 127.0.0.1:2181
+  group: compose-admin
+
+seata:
+  # 是否开启seata，默认true
+  enabled: false
+  application-id: ${spring.application.name}
+  # seata事务组的名称，一定要和config.tx(nacos)中配置的相同
+  tx-service-group: ${spring.application.name}-tx-group
+  #  service:
+  #    grouplist:
+  #      compose-sync: 127.0.0.1:8091
+  #    vgroup-mapping:
+  #      compose-sync-group: compose-sync
+  # 配置中心的配置
+  config:
+    # 使用类型nacos
+    type: nacos
+    # nacos作为配置中心的相关配置，需要和server在同一个注册中心下
+    nacos:
+      # 命名空间，需要server端(registry和config)、nacos配置client端(registry和config)保持一致
+      namespace: seata
+      # 地址
+      server-addr: 127.0.0.1:8845
+      # 组， 需要server端(registry和config)、nacos配置client端(registry和config)保持一致
+      group: SEATA_GROUP
+      # 用户名和密码
+      username: nacos
+      password: nacos
+  registry:
+    type: nacos
+    nacos:
+      # 这里的名字一定要和seata服务端中的名称相同，默认是seata-server
+      application: seata-server
+      # 需要server端(registry和config)、nacos配置client端(registry和config)保持一致
+      group: SEATA_GROUP
+      namespace: seata
+      username: nacos
+      password: nacos
+      server-addr: 127.0.0.1:8845
+
+xxl:
+  job:
+    enabled: false
+    # 调度中心地址：如调度中心集群部署存在多个地址则用逗号分隔。
+    admin-addresses: http://127.0.0.1:8081/xxl-job-admin
+    # 执行器通讯TOKEN：非空时启用
+    access-token:
+    # 执行器配置
+    executor:
+      # 执行器AppName：执行器心跳注册分组依据；为空则关闭自动注册
+      appname: xxl-job-compose-admin-executor
+      # 执行器端口号 执行器从9101开始往后写
+      port: 9101
+      # 执行器注册：默认IP:PORT
+      address:
+      # 执行器IP：默认自动获取IP
+      ip:
+      # 执行器运行日志文件存储磁盘路径
+      logpath: ./logs/xxl-job
+      # 执行器日志文件保存天数：大于3生效
+      logretentiondays: 5
+
+# sa-token配置
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: satoken
+  # token有效期，单位s 默认30天, -1代表永不过期
+  timeout: 2592000
+  # token临时有效期 (指定时间内无操作就视为token过期) 单位: 秒
+  activity-timeout: -1
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: true
+  # token风格
+  token-style: random-128
+  # jwt秘钥
+  jwt-secret-key: composeadmin
+
+
+kafka:
+  address: 10.70.43.47:9092,10.70.43.78:9092,10.70.43.57:9092
+  userName:
+  passwd:
+  batchSize: 1000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS  #显示详细信息
+      url: http://127.0.0.1:8581/actuator/health
+
+  health:
+    db:
+      enabled: false
+    mail:
+      enabled: false
+    redis:
+      enabled: false
+    mongo:
+      enabled: false
+
+jodconverter:
+  local:
+    enabled: true
+#    office-home: D:\soft\openOffice
+    max-tasks-per-process: 10
+    prot-number: 8100
+
+
+zuul:
+  #  隐藏所有微服务名称(即使用微服务名称无法访问到服务)
+  #ignored-services: "*"
+  #  服务前缀名，想要访问项目之前要加上此路径
+  routes:
+    alert:
+      path: /alert/**
+      url: http://127.0.0.1:8582/
+    xxl-job:
+      path: /root/**
+      url: http://127.0.0.1:8581/

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.compose.metric.dao.ProvOrderDao">
+    <resultMap id="BaseResultMap" type="cn.compose.metric.entity.ProvOrder">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <id column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+        <result column="platform_order_no" jdbcType="VARCHAR" property="platformOrderNo" />
+        <result column="resource_id" jdbcType="INTEGER" property="resourceId" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="pay_amount" jdbcType="DECIMAL" property="payAmount" />
+        <result column="pay_amount_actual" jdbcType="DECIMAL" property="payAmountActual" />
+        <result column="valid_time" jdbcType="INTEGER" property="validTime" />
+        <result column="pay_url" jdbcType="VARCHAR" property="payUrl" />
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+        <result column="resorce_amount" jdbcType="DECIMAL" property="resorceAmount" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+
+    <update id="updateProvOrder" parameterType="cn.compose.metric.entity.ProvOrder">
+        update prov_order
+        set platform_order_no = #{provOrder.platformOrderNo}
+        <if test="provOrder.payUrl != null">
+            ,pay_url = #{provOrder.payUrl}
+        </if>
+        <if test="provOrder.payAmountActual != null">
+            ,pay_amount_actual = #{provOrder.payAmountActual}
+        </if>
+        <if test="provOrder.payTime != null">
+            ,pay_time = #{provOrder.payTime}
+        </if>
+        <if test="provOrder.status != null">
+            ,status = #{provOrder.status}
+        </if>
+        where order_number = #{provOrder.orderNumber}
+    </update>
+</mapper>

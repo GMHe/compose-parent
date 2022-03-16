@@ -1,0 +1,13 @@
+1、新增spring boot admin(示例)
+compose-admin 为服务端
+compose-alert 为客户端
+
+
+1、需启用spring boot admin时
+pom中开放引入security
+SecuritySecureConfig开放
+放开配置
+#  security:
+#    user:
+#      name: admin
+#      password: admin123

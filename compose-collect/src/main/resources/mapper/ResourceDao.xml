@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.compose.collect.dao.ResourceDao">
+    <resultMap id="BaseResultMap" type="cn.compose.collect.dto.ResourceDTO">
+        <result column="resource_id" jdbcType="INTEGER" property="resourceId"/>
+        <result column="resource_name" jdbcType="VARCHAR" property="resourceName"/>
+        <result column="resource_url" jdbcType="VARCHAR" property="resourceUrl"/>
+        <result column="resource_type" jdbcType="VARCHAR" property="resourceType"/>
+        <result column="describe" jdbcType="VARCHAR" property="describe"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="image_url" jdbcType="VARCHAR" property="imageUrl"/>
+        <result column="download_pwd" jdbcType="VARCHAR" property="downloadPwd"/>
+    </resultMap>
+
+    <select id="getResourceByResourceId" resultMap="BaseResultMap">
+    SELECT re.resource_id,re.resource_name,resource_url,red.`describe`,red.image_url,red.price,ret.type_name as 'resource_type' FROM resource_base re
+    LEFT JOIN resource_type ret ON re.resource_type_id = ret.resource_type_id
+    left JOIN resource_detail red ON re.resource_id = red.resource_id
+    </select>
+</mapper>

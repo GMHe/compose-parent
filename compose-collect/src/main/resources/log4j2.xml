@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<!--status：这个用于设置log4j2自身内部的信息输出，可以不设置，当设置成trace时，你会看到log4j2内部各种详细输出 -->
+<!--monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数，默认5秒检测一次配置变化 shutdownHook="disable" -->
+<Configuration status="info" monitorInterval="5"
+               shutdownHook="disable">
+
+  <!-- 将一些常用值提取出来，然后在文件的其他部分通过${}的形式引用，这些值可以随便定义 -->
+  <Properties>
+    <!-- 定义日志文件根目录 -->
+    <Property name="logDir" value="../logs" />
+    <Property name="pattern"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS}[%-level]-[%t]-[%c{1.}.%M(%L)]: %msg%n" />
+    <!-- 定义日志分卷文件通用文件名形式:%d{yyyy-MM-dd}-%i -->
+    <Property name="fileNamePattern" value="%d{yyyyMMdd}.%i" />
+    <!-- 文件滚动周期，此处的1是fileNamePattern中最小单位的数量，这里为1天 -->
+    <Property name="fileRolloverNum" value="1" />
+    <Property name="fileMaxSize" value="5 GB" />
+    <Property name="fileMaxNum" value="10" />
+    <!-- 最多保存的日志天数 -->
+    <Property name="fileDay" value="15d" />
+    <!-- 文件归档时，文件压缩比，0-9，值越大压缩越高，为0，不压缩，需结合文件名后缀.tar.gz才生效 -->
+    <Property name="fileCompressionRatio" value="9" />
+    <Property name="infoFileName" value="info" />
+  </Properties>
+
+  <Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+      <ThresholdFilter level="trace" onMatch="ACCEPT"
+                       onMismatch="DENY" />
+      <PatternLayout pattern="${pattern}" />
+    </Console>
+
+    <RollingFile name="info"
+                 fileName="${logDir}/${infoFileName}.log"
+                 filePattern="${logDir}/${infoFileName}.${fileNamePattern}.log">
+      <PatternLayout pattern="${pattern}" />
+      <Policies>
+        <TimeBasedTriggeringPolicy
+                interval="${fileRolloverNum}" />
+        <SizeBasedTriggeringPolicy
+                size="${fileMaxSize}" />
+      </Policies>
+      <DefaultRolloverStrategy max="${fileMaxNum}"
+                               compressionLevel="${fileCompressionRatio}">
+        <Delete basePath="${logDir}/" maxDepth="1">
+          <IfFileName glob="${infoFileName}*.log" />
+          <IfLastModified age="${fileDay}" />
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+    <AsyncLogger name="cn.compose.metric" level="info"
+                 additivity="false" includeLocation="true">
+      <AppenderRef ref="console" />
+      <AppenderRef ref="info" />
+    </AsyncLogger>
+    <AsyncRoot level="info" includeLocation="true">
+      <AppenderRef ref="console" />
+      <AppenderRef ref="info" />
+    </AsyncRoot>
+  </Loggers>
+</Configuration>

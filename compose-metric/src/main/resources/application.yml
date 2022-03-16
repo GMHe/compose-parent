@@ -1,0 +1,114 @@
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.32.2:3306/compose_metric?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    hikari:
+      pool-name: HikariCP-Pool
+      minimum-idle: 3
+      idle-timeout: 600000
+      maximum-pool-size: 20
+      auto-commit: true
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+  redis:
+    database: 0
+    #host: 192.168.32.2
+    cluster:
+      nodes: 192.168.32.2:6391,192.168.32.2:6392,192.168.32.2:6393
+    jedis:
+      pool:
+        #最大连接数据库连接数,设 0 为没有限制
+        max-active: 8
+        #最大等待连接中的数量,设 0 为没有限制
+        max-idle: 8
+        #最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。
+        max-wait: -1ms
+        #最小等待连接中的数量,设 0 为没有限制
+        min-idle: 0
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1ms
+        min-idle: 0
+      shutdown-timeout: 100ms
+    password:
+    #port: 6379
+    username:
+
+
+logging:
+  config: classpath:log4j2.xml
+  level:
+    web: info
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-prefix: debug
+
+distributedId:
+  address: 192.168.32.2:2181
+  group: compose_metric
+
+seata:
+  # 是否开启seata，默认true
+  enabled: true
+  application-id: ${spring.application.name}
+  # seata事务组的名称，一定要和config.tx(nacos)中配置的相同
+  tx-service-group: ${spring.application.name}-tx-group
+  #  service:
+  #    grouplist:
+  #      compose-sync: 192.168.32.2:8091
+  #    vgroup-mapping:
+  #      compose-sync-group: compose-sync
+  # 配置中心的配置
+  config:
+    # 使用类型nacos
+    type: nacos
+    # nacos作为配置中心的相关配置，需要和server在同一个注册中心下
+    nacos:
+      # 命名空间，需要server端(registry和config)、nacos配置client端(registry和config)保持一致
+      namespace: seata
+      # 地址
+      server-addr: 192.168.32.2:8845
+      # 组， 需要server端(registry和config)、nacos配置client端(registry和config)保持一致
+      group: SEATA_GROUP
+      # 用户名和密码
+      username: nacos
+      password: nacos
+  registry:
+    type: nacos
+    nacos:
+      # 这里的名字一定要和seata服务端中的名称相同，默认是seata-server
+      application: seata-server
+      # 需要server端(registry和config)、nacos配置client端(registry和config)保持一致
+      group: SEATA_GROUP
+      namespace: seata
+      username: nacos
+      password: nacos
+      server-addr: 192.168.32.2:8845
+
+# sa-token配置
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: satoken
+  # token有效期，单位s 默认30天, -1代表永不过期
+  timeout: 2592000
+  # token临时有效期 (指定时间内无操作就视为token过期) 单位: 秒
+  activity-timeout: -1
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: true
+  # token风格
+  token-style: random-128
+  # jwt秘钥
+  jwt-secret-key: composemetric

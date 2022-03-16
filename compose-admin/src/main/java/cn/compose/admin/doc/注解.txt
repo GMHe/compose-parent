@@ -1,0 +1,8 @@
+实体加此注解：开启链式编程(业务复杂时，不建议使用)
+@Accessors(chain = true)
+
+//重写equals和hashCode方法,比较父类中的属性，false时不比较
+@EqualsAndHashCode(callSuper = true)
+
+//重写toString方法，为true时，可以带上父类的属性
+@ToString(callSuper = true)
