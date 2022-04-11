@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  **/
 @Service
 @Slf4j
-public class WebSocketBiz implements IMsgHandler {
+public class WebSocketMsgBiz implements IMsgHandler {
 
     @Override
     public void processMsg(String message) {

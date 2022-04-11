@@ -23,9 +23,10 @@ spring:
 
   redis:
     database: 0
-    host: 192.168.32.2
-#    cluster:
-#     nodes: 192.168.32.2:6391,192.168.32.2:6392,192.168.32.2:6393
+    #host: 192.168.32.2
+    cluster:
+     #三主三从，前三为主
+     nodes: 192.168.32.2:6391,192.168.32.2:6392,192.168.32.2:6393,192.168.32.2:6394,192.168.32.2:6395,192.168.32.2:6396
     jedis:
       pool:
         #最大连接数据库连接数,设 0 为没有限制
@@ -43,7 +44,8 @@ spring:
         max-wait: -1ms
         min-idle: 0
       shutdown-timeout: 100ms
-    password: 123456
+    #password: 123456
+    password:
     #port: 6379
     username:
 
@@ -217,3 +219,13 @@ zuul:
     xxl-job:
       path: /root/**
       url: http://127.0.0.1:8581/
+
+filter-device:
+  deviceList:
+    - deviceModel: 5353
+      orderSerial:
+        - TC2055CC0002
+        - TC2040CB1111
+    - deviceModel: 5384
+      orderSerial:
+        - PY5579CF0001

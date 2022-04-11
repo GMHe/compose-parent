@@ -55,6 +55,8 @@ public class Constants {
     public static final String WEBSOCKET_STATUS_MSG = "close";
     public static final String WEBSOCKET_CHANNEL = "channel:tableWebSocketHandler";
     public static final String SYNC_MGR_UPDATE_LIST_CACHE = "channel:SYNC_MGR_UPDATE_LIST_CACHE";
+
+    public static final String ORDER_STATE_CHANNEL = "channel:ORDER_ID_LIST_CHANNEL";
     //设备信息：device
     public static final String SYNC_MGR_TYPE_DEVICE = "device";
     //平台信息：platformInfo

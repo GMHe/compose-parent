@@ -15,14 +15,6 @@ import java.util.Map;
 @Slf4j
 public class RedisMsg implements MessageDelegate {
 
-//    private TableService tableService;
-//    private DeviceService deviceService;
-//
-//    public RedisMsg(TableService tableService, DeviceService deviceService){
-//        this.tableService = tableService;
-//        this.deviceService = deviceService;
-//    }
-
     private Map<String, IMsgHandler> handlerMap = new HashMap<>();
 
     @Resource

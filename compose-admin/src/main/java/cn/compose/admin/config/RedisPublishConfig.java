@@ -25,7 +25,7 @@ public class RedisPublishConfig {
      * @return
      */
     @Bean
-    RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
+    RedisMessageListenerContainer redisPublishContainer(RedisConnectionFactory connectionFactory,
                                             MessageListenerAdapter listenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
@@ -33,8 +33,10 @@ public class RedisPublishConfig {
         Set<PatternTopic> topics = new HashSet<>();
         topics.add(new PatternTopic(Constants.WEBSOCKET_CHANNEL));
         topics.add(new PatternTopic(Constants.SYNC_MGR_UPDATE_LIST_CACHE));
+        topics.add(new PatternTopic(Constants.ORDER_STATE_CHANNEL));
         container.addMessageListener(listenerAdapter, topics);
         //多PatternTopic处理消息，处理类需要实现IMsgHandler
+
         return container;
     }
 

@@ -14,7 +14,7 @@ public class ComposeJob {
     private ExecutorService dataExecutor = new ThreadPoolExecutor(3,10,300, TimeUnit.SECONDS,new LinkedBlockingQueue<Runnable>());
 
 
-    @Scheduled(fixedDelay = 10*1000L, initialDelay = 10000L)
+    @Scheduled(fixedDelay = 60*60*1000L, initialDelay = 10000L)
     public void syncBaseInfoDevice1() {
         //异步 调用下发指令
         CompletableFuture.runAsync(() -> {
@@ -25,7 +25,7 @@ public class ComposeJob {
         log.info("任务一========");
     }
 
-    @Scheduled(fixedDelay = 13*1000L, initialDelay = 13000L)
+    @Scheduled(fixedDelay = 60*60*1000L, initialDelay = 13000L)
     public void syncBaseInfoDevice2() {
         CompletableFuture.runAsync(() -> {
             Random random=new Random();
@@ -35,7 +35,7 @@ public class ComposeJob {
         log.info("任务二========");
     }
 
-    @Scheduled(fixedDelay = 12*1000L, initialDelay = 12000L)
+    @Scheduled(fixedDelay = 60*60*1000L, initialDelay = 12000L)
     public void syncBaseInfoDevice3() {
         CompletableFuture.runAsync(() -> {
             Random random=new Random();
@@ -45,7 +45,7 @@ public class ComposeJob {
         log.info("任务三========");
     }
 
-    @Scheduled(fixedDelay = 18*1000L, initialDelay = 18000L)
+    @Scheduled(fixedDelay = 60*60*1000L, initialDelay = 18000L)
     public void syncBaseInfoDevice4() {
         CompletableFuture.runAsync(() -> {
             Random random=new Random();
@@ -55,7 +55,7 @@ public class ComposeJob {
         log.info("任务四========");
     }
 
-    @Scheduled(fixedDelay = 15*1000L, initialDelay = 15000L)
+    @Scheduled(fixedDelay = 60*60*1000L, initialDelay = 15000L)
     public void syncBaseInfoDevic5() {
         CompletableFuture.runAsync(() -> {
             Random random=new Random();
