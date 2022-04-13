@@ -443,6 +443,13 @@
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.webjars.npm/nanoid -->
+		<dependency>
+			<groupId>org.webjars.npm</groupId>
+			<artifactId>nanoid</artifactId>
+			<version>3.3.2</version>
+		</dependency>
+
 	</dependencies>
 
 

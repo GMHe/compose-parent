@@ -79,6 +79,25 @@ spring:
     virtual-host: /
     username: guest
     password: guest
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    listener:
+      simple:
+        # 手动确认
+        acknowledge-mode: manual
+        retry:
+          enabled: true
+          # 重试3次失败后不再重试
+          max-attempts: 3
+        default-requeue-rejected: true
+        # 消费最大并发数
+        concurrency:  5
+        # 一次请求中预处理的消息数量
+        prefetch: 5
+    cache:
+      channel:
+        size: 10
+
 
 
 logging:
