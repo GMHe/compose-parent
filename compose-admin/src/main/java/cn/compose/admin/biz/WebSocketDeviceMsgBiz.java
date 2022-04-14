@@ -5,10 +5,13 @@ import cn.compose.admin.constant.Constants;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
- * @ClassName WebSocketBiz
+ * @ClassName WebSocketDeviceMsgBiz
  * @Description 类描述
  * @Author hgm
  * @Date 2021/9/29 18:22
@@ -16,7 +19,10 @@ import org.springframework.stereotype.Service;
  **/
 @Service
 @Slf4j
-public class WebSocketMsgBiz implements IMsgHandler {
+public class WebSocketDeviceMsgBiz implements IMsgHandler {
+
+    @Resource
+    RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public void processMsg(String message) {
@@ -24,6 +30,7 @@ public class WebSocketMsgBiz implements IMsgHandler {
         //处理消息刷新缓存
         JSONObject json = JSON.parseObject(message);
         String syncType = json.getString("syncType");
+
         //平台信息
         if (Constants.SYNC_MGR_TYPE_PLATFORMINFO.equals(syncType)) {
 //            SysPlatformInfoListVO sysPlatformInfoListVO=new SysPlatformInfoListVO();

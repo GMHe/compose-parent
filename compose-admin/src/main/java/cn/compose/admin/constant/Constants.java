@@ -63,6 +63,9 @@ public class Constants {
     public static final String SYNC_MGR_TYPE_PLATFORMINFO = "platformInfo";
 
 
+    public static final String WEBSOCKET_TIME = "WEBSOCKET_TIME";
+
+
     /**
      * 档案表通用字段
      */

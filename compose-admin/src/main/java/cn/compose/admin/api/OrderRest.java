@@ -3,6 +3,7 @@ package cn.compose.admin.api;
 import cn.compose.admin.base.Response;
 import cn.compose.admin.base.ResponseBuilder;
 import cn.compose.admin.biz.OrderBiz;
+import cn.compose.admin.entity.ProvOrder;
 import cn.compose.admin.vo.OrderVO;
 import com.contive.plugin.did.DistributedId;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +34,8 @@ public class OrderRest {
     public Response createOrder(@RequestParam(value = "userId", required = false) String userId,
                                 @RequestParam(value = "resourceId") String resourceId,
                                 @RequestParam(value = "payType") String payType) {
-        OrderVO orderVo = orderBiz.createOrder(userId, resourceId, payType);
-        return ResponseBuilder.ok(orderVo, "创建订单成功");
+        ProvOrder provOrder = orderBiz.createOrder(userId, resourceId, payType);
+        return ResponseBuilder.ok(provOrder, "创建订单成功");
 
     }
 

@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -26,12 +26,12 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@Configuration
+@Component
 public class CodeLoginSocketHandler extends AbstractWebSocketHandler {
     private Map<String, WebSocketSession> webSocketSessionMap = new ConcurrentHashMap();
     private LoadingCache<String, String> sessionLocalCache = Caffeine.newBuilder()
             .expireAfterWrite(15, TimeUnit.MINUTES)
-            .scheduler(Scheduler.forScheduledExecutorService(new ScheduledThreadPoolExecutor(3,
+            .scheduler(Scheduler.forScheduledExecutorService(new ScheduledThreadPoolExecutor(2,
                     new BasicThreadFactory.Builder().namingPattern("caffeine-schedule-pool-%d").daemon(true).build())))
             .removalListener(new RemovalListener<String, String>() {
                 @Override
@@ -98,7 +98,7 @@ public class CodeLoginSocketHandler extends AbstractWebSocketHandler {
             respResult.setMsg("接收消息异常！检查数据接结构是否为JSON，连接关闭！");
             respResult.setTime(String.valueOf(System.currentTimeMillis()));
             sendMessage(session, JSON.toJSONString(respResult));
-            session.close();
+            //session.close();
         }
     }
 

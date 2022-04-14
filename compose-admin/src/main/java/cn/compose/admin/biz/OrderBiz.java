@@ -1,9 +1,9 @@
 package cn.compose.admin.biz;
 
-import cn.compose.admin.dao.OrderInfoMapper;
-import cn.compose.admin.dao.ProvOrderMapper;
 import cn.compose.admin.base.ApiCodes;
+import cn.compose.admin.dao.OrderInfoMapper;
 import cn.compose.admin.dao.ProvOrderDao;
+import cn.compose.admin.dao.ProvOrderMapper;
 import cn.compose.admin.dao.ResourceDao;
 import cn.compose.admin.dto.ResourceDTO;
 import cn.compose.admin.entity.OrderInfo;
@@ -23,7 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName OrderBiz
@@ -46,7 +49,7 @@ public class OrderBiz {
     @Resource
     private OrderInfoMapper orderInfoMapper;
 
-    public OrderVO createOrder(String userId, String resourceId, String payType) {
+    public ProvOrder createOrder(String userId, String resourceId, String payType) {
         ResourceDTO resourceDTO = resourceDao.getResourceByResourceId(resourceId);
         String orderNumber = String.valueOf(distributedId.nextId());
         ProvOrder provOrder = new ProvOrder();
@@ -66,7 +69,7 @@ public class OrderBiz {
         OrderVO orderVO = new OrderVO();
         orderVO.setBuyerId(Long.getLong(userId));
         orderVO.setPayUrl(provOrder.getPayUrl());
-        return orderVO;
+        return provOrder;
     }
 
 

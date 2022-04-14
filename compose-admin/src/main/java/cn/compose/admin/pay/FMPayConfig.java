@@ -23,9 +23,9 @@ public class FMPayConfig {
     //接口返回类型
     private String returnType;
     //支付结果通知网址又称异步回调网址
-    private String notifyUrl = "http://gwiki.natappvip.cc/open/order/orderNotify";
+    private String notifyUrl = "http://gwiki.natappvip.cc/admin/open/order/orderNotify";
     // 成功后展示网址
-    private String returnUrl = "http://gwiki.natappvip.cc/open/order/orderPayResult";
+    private String returnUrl = "http://gwiki.natappvip.cc/admin/open/order/orderPayResult";
     // 支付方式
     private String payType;
     // 附加信息

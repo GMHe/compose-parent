@@ -1,16 +1,14 @@
 package cn.compose.admin.websocket;
 
 import cn.compose.admin.api.WebSocketRest;
+import cn.compose.admin.biz.WebSocketTableMsgBiz;
 import cn.compose.admin.config.ApplicationContextConfig;
 import cn.compose.admin.constant.Constants;
 import cn.compose.admin.dto.MessageDTO;
 import cn.compose.admin.dto.MessageVO;
 import com.alibaba.fastjson.JSON;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.github.benmanes.caffeine.cache.RemovalCause;
-import com.github.benmanes.caffeine.cache.RemovalListener;
-import com.github.benmanes.caffeine.cache.Scheduler;
+import com.github.benmanes.caffeine.cache.*;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -30,11 +28,13 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Configuration
+@Data
 public class TableWebSocketHandler extends AbstractWebSocketHandler {
     private Map<String, WebSocketSession> webSocketSessionMap = new ConcurrentHashMap();
-    private LoadingCache<String, String> sessionLocalCache = Caffeine.newBuilder()
+
+    public LoadingCache<String, String> sessionLocalCache = Caffeine.newBuilder()
             .expireAfterWrite(15, TimeUnit.MINUTES)
-            .scheduler(Scheduler.forScheduledExecutorService(new ScheduledThreadPoolExecutor(3,
+            .scheduler(Scheduler.forScheduledExecutorService(new ScheduledThreadPoolExecutor(2,
                     new BasicThreadFactory.Builder().namingPattern("caffeine-schedule-pool-%d").daemon(true).build())))
             .removalListener(new RemovalListener<String, String>() {
                 @Override
@@ -49,10 +49,9 @@ public class TableWebSocketHandler extends AbstractWebSocketHandler {
             .build(key -> {
                 return "";
             });
+
     //静态变量，用来记录当前连接数。应该把它设计成线程安全的。
     private static int onlineCount = 0;
-
-    private WebSocketRest tableService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -68,13 +67,15 @@ public class TableWebSocketHandler extends AbstractWebSocketHandler {
         sendMessage(session, JSON.toJSONString(respResult));
 
         //将连接信息存储到使用消息的业务中
-        tableService = ApplicationContextConfig.getBean(WebSocketRest.class);
+        WebSocketRest tableService = ApplicationContextConfig.getBean(WebSocketRest.class);
         tableService.setWebSocketSessionMap(webSocketSessionMap);
 
-        //每次连接时都去检测一下当前节点的sessionId缓存，防止连接未主动关闭一直消耗IO连接
-        sessionLocalCache.put(sessionId, sessionId);
-    }
+        WebSocketTableMsgBiz webSocketTableMsgBiz = ApplicationContextConfig.getBean(WebSocketTableMsgBiz.class);
+        webSocketTableMsgBiz.setWebSocketSessionMap(webSocketSessionMap);
 
+        //每次连接时都去检测一下当前节点的sessionId缓存，防止连接未主动关闭一直消耗IO连接
+        sessionLocalCache.put(session.getId(), session.getId());
+    }
 
     //TODO
     //若需接收消息处理时使用
@@ -83,6 +84,7 @@ public class TableWebSocketHandler extends AbstractWebSocketHandler {
         MessageVO respResult = new MessageVO();
         respResult.setMsgCode(Constants.RESPONSE_CODE_SUCCESS);
         try {
+            sessionLocalCache.put(session.getId(), session.getId());
             String msg = message.getPayload();
             log.info("接收到消息：{}", msg);
             MessageDTO messageDTO = JSON.parseObject(msg, MessageDTO.class);
@@ -96,15 +98,16 @@ public class TableWebSocketHandler extends AbstractWebSocketHandler {
         } catch (Exception e) {
             log.error("error", e);
             respResult.setMsgCode(Constants.RESPONSE_CODE_FAILURE);
-            respResult.setMsg("接收消息异常！检查数据接结构是否为JSON，连接关闭！");
+            respResult.setMsg("接收消息异常！检查数据接结构是否为JSON！");
             respResult.setTime(String.valueOf(System.currentTimeMillis()));
             sendMessage(session, JSON.toJSONString(respResult));
-            session.close();
+            //session.close();
         }
     }
 
     @Override
     public void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+        sessionLocalCache.put(session.getId(), session.getId());
         log.info("收到消息,类型为：BinaryMessage");
     }
 
@@ -140,6 +143,7 @@ public class TableWebSocketHandler extends AbstractWebSocketHandler {
             return;
         }
         try {
+            sessionLocalCache.put(session.getId(), session.getId());
             session.sendMessage(new TextMessage(message));
         } catch (IOException e) {
             log.error("error", e);
