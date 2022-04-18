@@ -1,3 +1,4 @@
+/*
 package cn.compose.admin.dotodto;
 
 import cn.compose.admin.convert.UserConvert;
@@ -23,3 +24,4 @@ public class ConvertTest {
     }
 
 }
+*/

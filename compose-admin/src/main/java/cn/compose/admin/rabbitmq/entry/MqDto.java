@@ -1,7 +1,7 @@
 package cn.compose.admin.rabbitmq.entry;
 
-import groovy.transform.ToString;
 import lombok.Data;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
